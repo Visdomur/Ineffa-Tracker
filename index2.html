@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ineffa Preparation Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:wght@400;600&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #B8860B; --secondary: #8B4513; --accent: #CD7F32;
+            --bg-dark: #1a1410; --bg-card: #2d2520; --text: #e8dcc4;
+            --text-dim: #a89676; --border: #4a3f2f; --success: #6b8e23;
+        }
+        body {
+            font-family: 'Crimson Text', serif; background: var(--bg-dark); color: var(--text);
+            min-height: 100vh;
+            background-image: linear-gradient(rgba(26, 20, 16, 0.85), rgba(15, 12, 8, 0.85)),
+                url('https://img.freepik.com/premium-photo/steampunkinspired-discount-banner-with-antique-brass-gears-cogs-urban-street-scene-futuristic-industrial-metalwork-design-with-vintage-mechanical-elements_924727-23609.jpg?w=360');
+            background-attachment: fixed; background-size: cover; background-position: center;
+        }
+        .cyber-grid {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(184, 134, 11, 0.03) 2px, rgba(184, 134, 11, 0.03) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(184, 134, 11, 0.03) 2px, rgba(184, 134, 11, 0.03) 4px);
+            background-size: 60px 60px; pointer-events: none; z-index: 0; opacity: 0.5;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; position: relative; z-index: 1; }
+        header { text-align: center; margin-bottom: 20px; padding: 40px 20px; }
+        h1 {
+            font-family: 'Cinzel', serif; font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 15px; letter-spacing: 3px; text-transform: uppercase; position: relative;
+        }
+        h1::after {
+            content: ''; position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%);
+            width: 200px; height: 2px; background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        }
+        .subtitle {
+            font-size: 1.1rem; color: var(--text-dim); text-transform: uppercase;
+            letter-spacing: 6px; margin-bottom: 30px; margin-top: 32px; font-weight: 600;
+        }
+        .resource-counter { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin: 30px 0; }
+        .resource-item {
+            background: var(--bg-card); border: 3px double var(--border); border-radius: 4px;
+            padding: 20px 30px; display: flex; align-items: center; gap: 15px; transition: all 0.3s ease;
+            position: relative; overflow: hidden; box-shadow: inset 0 0 20px rgba(0,0,0,0.3), 0 4px 8px rgba(0,0,0,0.4);
+        }
+        .resource-item:hover { border-color: var(--primary); transform: translateY(-2px); }
+        .resource-icon { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; }
+        .resource-input {
+            font-family: 'Cinzel', serif; font-size: 1.8rem; font-weight: 700; width: 100px;
+            background: rgba(184, 134, 11, 0.1); border: 2px solid var(--primary); border-radius: 4px;
+            color: var(--text); text-align: center; padding: 8px; transition: all 0.3s ease;
+        }
+        .resource-input:focus { outline: none; background: rgba(184, 134, 11, 0.2); }
+        .actions { display: flex; gap: 15px; justify-content: center; margin: 30px 0; flex-wrap: wrap; }
+        .btn {
+            font-family: 'Cinzel', serif; padding: 14px 32px; border: none; border-radius: 4px;
+            font-size: 1rem; font-weight: 700; cursor: pointer; text-transform: uppercase;
+            letter-spacing: 2px; transition: all 0.3s ease; box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+        }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
+        .btn-primary:hover { transform: translateY(-3px); }
+        .btn-secondary { background: var(--bg-card); color: var(--text); border: 3px double var(--border); }
+        .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+        .notice {
+            background: rgba(205, 127, 50, 0.1); border: 3px double var(--accent); border-radius: 4px;
+            padding: 20px; margin: 10px 0 30px 0; position: relative;
+        }
+        .notice::before {
+            content: '⚙'; position: absolute; top: -15px; left: 20px;
+            background: var(--bg-dark); padding: 0 10px; font-size: 1.5rem;
+        }
+        .notice h3 {
+            font-family: 'Cinzel', serif; color: var(--accent); margin-top: 15px; margin-bottom: 10px;
+            text-transform: uppercase; letter-spacing: 2px;
+        }
+        .materials-section { margin: 40px 0; }
+        .section-title {
+            font-family: 'Cinzel', serif; font-size: 2rem; font-weight: 700; color: var(--accent);
+            margin-bottom: 25px; text-transform: uppercase; letter-spacing: 3px;
+            display: flex; align-items: center; gap: 15px;
+        }
+        .section-title::before, .section-title::after {
+            content: ''; flex: 1; height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        }
+        .material-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .material-card {
+            background: var(--bg-card); border: 3px double var(--border); border-radius: 4px;
+            padding: 20px; transition: all 0.3s ease; position: relative;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.3), 0 4px 8px rgba(0,0,0,0.4);
+        }
+        .material-card:hover { border-color: var(--primary); transform: translateY(-5px); }
+        .material-card.completed { background: rgba(0, 0, 0, 0.5); }
+        .material-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 15px; }
+        .material-info { flex: 1; }
+        .material-icon {
+            width: 64px; height: 64px; border-radius: 8px; border: 2px solid var(--border);
+            background: linear-gradient(135deg, rgba(184, 134, 11, 0.2), rgba(139, 69, 19, 0.2));
+            padding: 4px; display: flex; align-items: center; justify-content: center;
+        }
+        .material-icon img { width: 100%; height: 100%; object-fit: contain; }
+        .material-name { font-family: 'Lato', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--text); }
+        .material-amount { font-size: 1.1rem; color: var(--text-dim); margin-top: 8px; }
+        .progress-bar {
+            width: 100%; height: 8px; background: rgba(74, 63, 47, 0.5); border-radius: 2px;
+            overflow: hidden; margin: 15px 0; border: 1px solid var(--border);
+        }
+        .progress-fill {
+            height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.3s ease; position: relative;
+        }
+        .progress-fill::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .checkbox-container {
+            display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 6px;
+            cursor: pointer; transition: background 0.2s ease;
+        }
+        .checkbox-container:hover { background: rgba(184, 134, 11, 0.08); }
+        input[type="checkbox"] {
+            width: 24px; height: 24px; cursor: pointer; appearance: none; -webkit-appearance: none;
+            border: 3px solid var(--border); border-radius: 4px; background: var(--bg-dark);
+            position: relative; transition: all 0.3s ease;
+        }
+        input[type="checkbox"]:hover { border-color: var(--primary); }
+        input[type="checkbox"]:checked {
+            background: linear-gradient(135deg, var(--primary), var(--accent)); border-color: var(--accent);
+        }
+        input[type="checkbox"]:checked::after {
+            content: '✓'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            color: var(--bg-dark); font-size: 16px; font-weight: bold;
+        }
+        .checkbox-label { flex: 1; font-size: 0.95rem; color: var(--text-dim); }
+        footer {
+            text-align: center; margin-top: 60px; padding: 30px 20px; border-top: 1px solid var(--border);
+            color: var(--text-dim); font-size: 0.9rem;
+        }
+        footer p { margin: 8px 0; }
+        .credits { margin-top: 20px; font-family: 'Cinzel', serif; color: var(--primary); }
+        .auto-save {
+            position: fixed; bottom: 20px; right: 20px; background: var(--bg-card);
+            border: 3px double var(--border); border-radius: 4px; padding: 12px 20px;
+            font-size: 0.85rem; color: var(--text-dim); opacity: 0; transition: opacity 0.3s ease; z-index: 100;
+        }
+        .auto-save.show { opacity: 1; }
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .material-grid { grid-template-columns: 1fr; }
+            .resource-counter { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="cyber-grid"></div>
+    <div class="container">
+        <header>
+            <h1>Ineffa</h1>
+            <p class="subtitle">Preparation Tracker</p>
+            <div class="resource-counter">
+                <div class="resource-item">
+                    <div class="resource-icon">
+                        <img src="https://paimon.moe/images/primogem.png" alt="Primogem" style="width: 48px; height: 48px;">
+                    </div>
+                    <div>
+                        <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 5px;">Primogems</div>
+                        <input type="number" class="resource-input" id="primogems" value="0" min="0">
+                    </div>
+                </div>
+                <div class="resource-item">
+                    <div class="resource-icon">
+                        <img src="https://paimon.moe/images/intertwined_fate.png" alt="Intertwined Fate" style="width: 48px; height: 48px;">
+                    </div>
+                    <div>
+                        <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 5px;">Intertwined Fates</div>
+                        <input type="number" class="resource-input" id="fates" value="0" min="0">
+                    </div>
+                </div>
+            </div>
+            <div class="actions">
+                <button class="btn btn-primary" onclick="generateSummary()">Generate Summary Card</button>
+                <button class="btn btn-secondary" onclick="resetProgress()">Reset Progress</button>
+            </div>
+        </header>
+        <div class="notice">
+            <h3>User Notices</h3>
+            <p><strong>Ineffa is a 5-star Electro Polearm user from Nod-Krai. She specializes in off-field Electro application and introduces the unique Lunar-Charged reaction mechanic.</strong></p>
+            <p style="margin-top: 10px;"><strong>Auto-Save:</strong> Your progress is automatically saved to your browser's local storage. Thank you for using this checklist!</p>
+        </div>
+        <section class="materials-section">
+            <h2 class="section-title">Character Ascension</h2>
+            <div class="material-grid" id="ascension-materials"></div>
+        </section>
+        <section class="materials-section">
+            <h2 class="section-title">Talent Materials</h2>
+            <div class="material-grid" id="talent-materials"></div>
+        </section>
+        <section class="materials-section">
+            <h2 class="section-title">Signature Weapon: Fractured Halo</h2>
+            <div class="material-grid" id="weapon-materials"></div>
+        </section>
+        <footer>
+            <p><strong>Disclaimer:</strong> The Ineffa Preparation Tracker is a fan-made tool created for personal use only.</p>
+            <p>This project is not affiliated with, endorsed, sponsored, or specifically approved by HoYoverse (MiHoYo).</p>
+            <p>All game content, characters, images, and trademarks are the property of HoYoverse. All rights reserved.</p>
+            <p class="credits">Crafted with ♡ for Ineffa enthusiasts</p>
+        </footer>
+    </div>
+    <div class="auto-save" id="autoSave">✓ Progress Saved</div>
+    <script>
+        const materials = {
+            ascension: [
+                {id: 'vajrada-sliver', name: 'Vajrada Amethyst Sliver', amount: 1, img: 'vajrada_amethyst_sliver.png'},
+                {id: 'vajrada-fragment', name: 'Vajrada Amethyst Fragment', amount: 9, img: 'vajrada_amethyst_fragment.png'},
+                {id: 'vajrada-chunk', name: 'Vajrada Amethyst Chunk', amount: 9, img: 'vajrada_amethyst_chunk.png'},
+                {id: 'vajrada-gemstone', name: 'Vajrada Amethyst Gemstone', amount: 6, img: 'vajrada_amethyst_gemstone.png'},
+                {id: 'airflow', name: 'Secret Source Airflow Accumulator', amount: 46, img: 'secret_source_airflow_accumulator.png'},
+                {id: 'hornshroom', name: 'Glowing Hornshroom', amount: 168, img: 'glowing_hornshroom.png'},
+                {id: 'whistle-1', name: 'Sentry\'s Wooden Whistle', amount: 18, img: 'sentrys_wooden_whistle.png'},
+                {id: 'whistle-2', name: 'Warrior\'s Metal Whistle', amount: 30, img: 'warriors_metal_whistle.png'},
+                {id: 'whistle-3', name: 'Saurian-Crowned Warrior\'s Golden Whistle', amount: 36, img: 'saurian_crowned_warriors_golden_whistle.png'},
+                {id: 'heros-wit', name: 'Hero\'s Wit', amount: 418, img: 'heros_wit.png'},
+                {id: 'mora-ascension', name: 'Mora', amount: '2,092,400', img: 'mora.png'}
+            ],
+            talent: [
+                {id: 'teachings', name: 'Teachings of Conflict', amount: 9, img: 'teachings_of_conflict.png'},
+                {id: 'guide', name: 'Guide to Conflict', amount: 63, img: 'guide_to_conflict.png'},
+                {id: 'philosophies', name: 'Philosophies of Conflict', amount: 114, img: 'philosophies_of_conflict.png'},
+                {id: 'talent-whistle-1', name: 'Sentry\'s Wooden Whistle', amount: 18, img: 'sentrys_wooden_whistle.png'},
+                {id: 'talent-whistle-2', name: 'Warrior\'s Metal Whistle', amount: 66, img: 'warriors_metal_whistle.png'},
+                {id: 'talent-whistle-3', name: 'Saurian-Crowned Warrior\'s Golden Whistle', amount: 93, img: 'saurian_crowned_warriors_golden_whistle.png'},
+                {id: 'weekly', name: 'Eroded Sunfire', amount: 18, img: 'eroded_sunfire.png'},
+                {id: 'crown', name: 'Crown of Insight', amount: 3, img: 'crown_of_insight.png'},
+                {id: 'mora-talents', name: 'Mora', amount: '4,957,500', img: 'mora.png'}
+            ],
+            weapon: [
+                {id: 'weapon-1', name: 'Blazing Sacrificial Heart\'s Terror', amount: 5, img: 'blazing_sacrificial_hearts_terror.png'},
+                {id: 'weapon-2', name: 'Blazing Sacrificial Heart\'s Hesitance', amount: 14, img: 'blazing_sacrificial_hearts_hesitance.png'},
+                {id: 'weapon-3', name: 'Blazing Sacrificial Heart\'s Resolve', amount: 14, img: 'blazing_sacrificial_hearts_resolve.png'},
+                {id: 'weapon-4', name: 'Blazing Sacrificial Heart\'s Splendor', amount: 6, img: 'blazing_sacrificial_hearts_splendor.png'},
+                {id: 'feather-1', name: 'Juvenile Fang', amount: 15, img: 'juvenile_fang.png'},
+                {id: 'feather-2', name: 'Seasoned Fang', amount: 23, img: 'seasoned_fang.png'},
+                {id: 'feather-3', name: 'Tyrant\'s Fang', amount: 27, img: 'tyrants_fang.png'},
+                {id: 'mystic-ore', name: 'Mystic Enhancement Ore', amount: 709, img: 'mystic_enhancement_ore.png'},
+                {id: 'shard-1', name: 'Cold-Cracked Shellshard', amount: 23, img: 'cold_cracked_shellshard.png'},
+                {id: 'shard-2', name: 'Warm Back-Shell', amount: 27, img: 'warm_back_shell.png'},
+                {id: 'shard-3', name: 'Blazing Prismshell', amount: 41, img: 'blazing_prismshell.png'},
+                {id: 'mora-weapon', name: 'Mora', amount: '753,000', img: 'mora.png'}
+            ]
+        };
+
+        let progress = {};
+        let resources = {primogems: 0, fates: 0};
+
+        function createCard(mat) {
+            return `
+                <div class="material-card" id="card-${mat.id}">
+                    <div class="material-header">
+                        <div class="material-info">
+                            <div class="material-name">${mat.name}</div>
+                            <div class="material-amount">Need: ${mat.amount}</div>
+                        </div>
+                        <div class="material-icon"><img src="https://paimon.moe/images/items/${mat.img}" alt="${mat.name}"></div>
+                    </div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 0%"></div></div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="${mat.id}" onchange="updateProgress('${mat.id}')">
+                        <label class="checkbox-label" for="${mat.id}">${mat.amount} - ${mat.name}</label>
+                    </div>
+                </div>
+            `;
+        }
+
+        function init() {
+            document.getElementById('ascension-materials').innerHTML = materials.ascension.map(createCard).join('');
+            document.getElementById('talent-materials').innerHTML = materials.talent.map(createCard).join('');
+            document.getElementById('weapon-materials').innerHTML = materials.weapon.map(createCard).join('');
+            loadSavedData();
+        }
+
+        function loadSavedData() {
+            const saved = localStorage.getItem('ineffa-progress');
+            const savedResources = localStorage.getItem('ineffa-resources');
+            if (saved) {
+                progress = JSON.parse(saved);
+                Object.keys(progress).forEach(id => {
+                    const checkbox = document.getElementById(id);
+                    if (checkbox) {
+                        checkbox.checked = progress[id];
+                        updateCardAppearance(id);
+                    }
+                });
+            }
+            if (savedResources) {
+                resources = JSON.parse(savedResources);
+                document.getElementById('primogems').value = resources.primogems;
+                document.getElementById('fates').value = resources.fates;
+            }
+        }
+
+        function saveProgress() {
+            localStorage.setItem('ineffa-progress', JSON.stringify(progress));
+            localStorage.setItem('ineffa-resources', JSON.stringify(resources));
+        }
+
+        function updateProgress(id) {
+            const checkbox = document.getElementById(id);
+            progress[id] = checkbox.checked;
+            updateCardAppearance(id);
+            saveProgress();
+            showAutoSave();
+        }
+
+        function updateCardAppearance(id) {
+            const checkbox = document.getElementById(id);
+            const card = document.getElementById('card-' + id);
+            const progressBar = card.querySelector('.progress-fill');
+            if (checkbox.checked) {
+                card.classList.add('completed');
+                progressBar.style.width = '100%';
+            } else {
+                card.classList.remove('completed');
+                progressBar.style.width = '0%';
+            }
+        }
+
+        document.getElementById('primogems').addEventListener('input', function() {
+            resources.primogems = parseInt(this.value) || 0;
+            saveProgress();
+            showAutoSave();
+        });
+
+        document.getElementById('fates').addEventListener('input', function() {
+            resources.fates = parseInt(this.value) || 0;
+            saveProgress();
+            showAutoSave();
+        });
+
+        function showAutoSave() {
+            const autoSave = document.getElementById('autoSave');
+            autoSave.classList.add('show');
+            setTimeout(() => autoSave.classList.remove('show'), 2000);
+        }
+
+        function generateSummary() {
+            const allMats = [...materials.ascension, ...materials.talent, ...materials.weapon];
+            const total = allMats.length;
+            const completed = Object.values(progress).filter(v => v).length;
+            const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+            alert(`📊 Progress Summary\n\n✓ Completed: ${completed}/${total} materials (${percentage}%)\n💎 Primogems: ${resources.primogems}\n✨ Intertwined Fates: ${resources.fates}\n\nTotal Pulls Available: ${Math.floor(resources.primogems / 160) + resources.fates}\n\nKeep farming, Traveler! ⚡`);
+        }
+
+        function resetProgress() {
+            if (confirm('Are you sure you want to reset all progress? This cannot be undone.')) {
+                localStorage.removeItem('ineffa-progress');
+                localStorage.removeItem('ineffa-resources');
+                location.reload();
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
